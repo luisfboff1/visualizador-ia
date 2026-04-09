@@ -117,9 +117,9 @@ export class CopilotProvider extends ProviderBase {
       await page.waitForTimeout(3000)
 
       // Extrai linhas da tabela de modelos
-      const rows = await page.$$eval('table tbody tr', (trs) =>
-        trs.map((tr) => {
-          const cells = Array.from(tr.querySelectorAll('td')).map((td) => (td as any).innerText.trim())
+      const rows = await page.$$eval('table tbody tr', (trs: any[]) =>
+        trs.map((tr: any) => {
+          const cells = Array.from(tr.querySelectorAll('td')).map((td: any) => td.innerText.trim())
           return cells
         })
       )

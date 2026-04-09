@@ -1,0 +1,5 @@
+ignoredBuiltDependencies:
+  - electron-winstaller
+  - keytar
+  - tldjs
+  - win-dpapi

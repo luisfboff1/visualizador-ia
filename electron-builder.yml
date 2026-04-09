@@ -22,6 +22,7 @@ win:
     - target: dir
       arch: [x64]
   icon: build/icon.ico
+  signAndEditExecutable: false
 
 extraMetadata:
   main: dist-main/index.js
