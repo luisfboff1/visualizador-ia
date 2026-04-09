@@ -1,6 +1,6 @@
 {
   "name": "visualizador-ia",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "AI Usage Dashboard – Claude, Codex, Copilot",
   "main": "dist-main/index.js",
   "scripts": {
