@@ -5,6 +5,8 @@ import { ProviderCard } from './components/ProviderCard'
 export function App() {
   const [diagInfo, setDiagInfo] = useState<string | null>(null)
   const [pinned, setPinned] = useState(true)
+  const [updateInfo, setUpdateInfo] = useState<{ hasUpdate: boolean; latestVersion: string; url: string } | null>(null)
+  const [checkingUpdate, setCheckingUpdate] = useState(false)
   const { snapshot, isRefreshing, lastRefreshLabel, refresh, refreshCooldown } = useProviderData()
 
   const isLoading = isRefreshing && snapshot === null
@@ -50,6 +52,17 @@ export function App() {
     setTimeout(() => setDiagInfo(null), 30000)
   }
 
+  const checkUpdate = async () => {
+    setCheckingUpdate(true)
+    setUpdateInfo(null)
+    const result = await window.api.checkUpdate()
+    setCheckingUpdate(false)
+    setUpdateInfo(result)
+    if (!result.hasUpdate) {
+      setTimeout(() => setUpdateInfo(null), 4000)
+    }
+  }
+
   return (
     <div className="app">
       <div className="title-bar">
@@ -93,6 +106,19 @@ export function App() {
         <pre className="diag-overlay">{diagInfo}</pre>
       )}
 
+      {updateInfo && (
+        <div className={`update-banner ${updateInfo.hasUpdate ? 'has-update' : 'up-to-date'}`}>
+          {updateInfo.hasUpdate ? (
+            <>
+              <span>Nova versão disponível: <strong>v{updateInfo.latestVersion}</strong></span>
+              <button className="update-download-btn" onClick={() => window.api.openExternal(updateInfo.url)}>Baixar</button>
+            </>
+          ) : (
+            <span>✓ Você está na versão mais recente</span>
+          )}
+        </div>
+      )}
+
       <div className="footer">
         <span className="footer-last">Atualizado: {lastRefreshLabel}</span>
         <div className="footer-actions">
@@ -100,6 +126,12 @@ export function App() {
           <button className="diag-btn" onClick={runRawFetch} title="Raw API Claude">🔍C</button>
           <button className="diag-btn" onClick={runRawFetchCodex} title="Raw API Codex">🔍X</button>
           <button className="diag-btn" onClick={runRawFetchCopilot} title="Raw API Copilot">🔍G</button>
+          <button
+            className="diag-btn"
+            onClick={checkUpdate}
+            disabled={checkingUpdate}
+            title="Verificar atualização"
+          >{checkingUpdate ? '…' : '⬆'}</button>
           <button
             className={`refresh-btn ${isRefreshing ? 'spinning' : ''}`}
             onClick={refresh}

@@ -69,6 +69,7 @@ declare global {
       rawFetchCopilot: () => Promise<{ status?: number; data?: unknown; error?: string; raw?: string }>
       hideWindow: () => Promise<void>
       toggleAlwaysOnTop: () => Promise<boolean>
+      checkUpdate: () => Promise<{ hasUpdate: boolean; latestVersion: string; url: string }>
     }
   }
 }

@@ -108,9 +108,9 @@ export class ClaudeProvider extends ProviderBase {
     if (opus) windows.push(opus)
 
     const extraUsage = data.extra_usage
-    // API returns values in "credits" (1000 credits = $1.00)
+    // API returns values in "credits" (100 credits = R$1.00)
     const toUsd = (credits: number | null | undefined) =>
-      credits != null ? credits / 1000 : undefined
+      credits != null ? credits / 100 : undefined
     return this.makeSnapshot({
       source: 'oauth',
       windows,

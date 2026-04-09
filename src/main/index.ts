@@ -287,6 +287,36 @@ ipcMain.handle('toggle-always-on-top', () => {
   return next
 })
 
+ipcMain.handle('check-update', (): Promise<{ hasUpdate: boolean; latestVersion: string; url: string }> => {
+  const currentVersion = app.getVersion()
+  return new Promise((resolve) => {
+    const options = {
+      hostname: 'api.github.com',
+      path: '/repos/luisfboff1/visualizador-ia/releases/latest',
+      method: 'GET',
+      headers: { 'User-Agent': 'visualizador-ia', 'Accept': 'application/vnd.github+json' },
+      timeout: 8000,
+    }
+    const req = https.request(options, (res) => {
+      let body = ''
+      res.on('data', (chunk: Buffer) => { body += chunk })
+      res.on('end', () => {
+        try {
+          const json = JSON.parse(body) as { tag_name?: string; html_url?: string }
+          const latestVersion = (json.tag_name ?? '').replace(/^v/, '')
+          const hasUpdate = !!latestVersion && latestVersion !== currentVersion
+          resolve({ hasUpdate, latestVersion, url: json.html_url ?? 'https://github.com/luisfboff1/visualizador-ia/releases' })
+        } catch {
+          resolve({ hasUpdate: false, latestVersion: currentVersion, url: '' })
+        }
+      })
+    })
+    req.on('error', () => resolve({ hasUpdate: false, latestVersion: currentVersion, url: '' }))
+    req.on('timeout', () => { req.destroy(); resolve({ hasUpdate: false, latestVersion: currentVersion, url: '' }) })
+    req.end()
+  })
+})
+
 // --- App lifecycle ---
 
 app.whenReady().then(() => {

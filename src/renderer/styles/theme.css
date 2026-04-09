@@ -354,6 +354,45 @@ html, body, #root {
   transition: all 0.15s;
 }
 .diag-btn:hover { border-color: var(--text-muted); color: var(--text); }
+.diag-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ===== Update Banner ===== */
+.update-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 12px 8px;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  animation: fadeIn 0.2s ease;
+}
+.update-banner.has-update {
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  color: var(--yellow);
+}
+.update-banner.up-to-date {
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  color: var(--green);
+}
+.update-download-btn {
+  padding: 3px 10px;
+  background: var(--yellow);
+  color: #000;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.update-download-btn:hover { opacity: 0.85; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
 .diag-overlay {
   position: absolute;

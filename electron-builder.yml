@@ -16,6 +16,7 @@ files:
 
 asar: true
 npmRebuild: false
+electronUpdaterCompatibility: ">=2.16"
 
 win:
   target:

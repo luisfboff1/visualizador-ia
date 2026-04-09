@@ -19,4 +19,5 @@ contextBridge.exposeInMainWorld('api', {
   rawFetchCopilot: () => ipcRenderer.invoke('raw-fetch-copilot'),
   hideWindow: () => ipcRenderer.invoke('hide-window'),
   toggleAlwaysOnTop: () => ipcRenderer.invoke('toggle-always-on-top'),
+  checkUpdate: () => ipcRenderer.invoke('check-update'),
 })

@@ -87,7 +87,7 @@ export function ProviderCard({ snapshot, providerKey, onRefreshNeeded, isLoading
                   <div className="extra-row">
                     <span className="extra-label">Uso extra</span>
                     <span className="extra-value">
-                      ${snapshot!.extraUsageSpendUsd?.toFixed(2)}{snapshot!.extraUsageLimitUsd !== undefined ? ` / $${snapshot!.extraUsageLimitUsd?.toFixed(2)}` : ''}
+                      R${snapshot!.extraUsageSpendUsd?.toFixed(2)}{snapshot!.extraUsageLimitUsd !== undefined ? ` / R$${snapshot!.extraUsageLimitUsd?.toFixed(2)}` : ''}
                     </span>
                   </div>
                 )}
