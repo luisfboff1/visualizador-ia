@@ -55,6 +55,14 @@ function createWindow() {
 
   mainWindow.on('show', () => updateTrayMenu())
   mainWindow.on('hide', () => updateTrayMenu())
+
+  // Auto-hide when clicking outside the widget (production only)
+  if (!isDev) {
+    mainWindow.on('blur', () => {
+      mainWindow?.hide()
+      updateTrayMenu()
+    })
+  }
 }
 
 function updateTrayMenu() {
