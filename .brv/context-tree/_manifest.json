@@ -3,13 +3,7 @@
     {
       "order": 3,
       "path": "_index.md",
-      "tokens": 630,
-      "type": "summary"
-    },
-    {
-      "order": 2,
-      "path": "project_setup/_index.md",
-      "tokens": 599,
+      "tokens": 1166,
       "type": "summary"
     },
     {
@@ -21,47 +15,59 @@
     {
       "importance": 50,
       "path": "project_setup/context.md",
-      "tokens": 192,
+      "tokens": 197,
       "type": "context"
     },
     {
       "importance": 50,
       "path": "project_setup/pnpm_build_setup/context.md",
-      "tokens": 112,
+      "tokens": 114,
       "type": "context"
     },
     {
       "importance": 50,
       "path": "project_setup/pnpm_build_setup/pnpm_install_and_build_fixes.md",
-      "tokens": 737,
+      "tokens": 749,
+      "type": "context"
+    },
+    {
+      "importance": 50,
+      "path": "project_setup/release_publishing/context.md",
+      "tokens": 132,
+      "type": "context"
+    },
+    {
+      "importance": 50,
+      "path": "project_setup/release_publishing/github_release_and_updater_flow.md",
+      "tokens": 1242,
       "type": "context"
     },
     {
       "importance": 50,
       "path": "providers/context.md",
-      "tokens": 158,
+      "tokens": 163,
       "type": "context"
     },
     {
       "importance": 50,
       "path": "providers/copilot_provider/context.md",
-      "tokens": 84,
+      "tokens": 86,
       "type": "context"
     },
     {
       "importance": 50,
       "path": "providers/copilot_provider/copilot_provider_data_fetch_flow.md",
-      "tokens": 700,
+      "tokens": 712,
       "type": "context"
     }
   ],
-  "generated_at": "2026-04-09T00:36:09.165Z",
+  "generated_at": "2026-04-09T14:12:43.229Z",
   "lane_tokens": {
-    "contexts": 1983,
+    "contexts": 3395,
     "stubs": 0,
-    "summaries": 1710
+    "summaries": 1647
   },
-  "source_fingerprint": "c09def08f51a59e8331b81d72dcbec5b8702830f2b7fa6b388024bbaf42e9dcb",
-  "total_tokens": 3693,
+  "source_fingerprint": "029d959a2cc223203a3731740363afdc90eb84cacd16722f77343cbe13339543",
+  "total_tokens": 5042,
   "version": 1
 }
