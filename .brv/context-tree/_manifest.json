@@ -1,0 +1,67 @@
+{
+  "active_context": [
+    {
+      "order": 3,
+      "path": "_index.md",
+      "tokens": 630,
+      "type": "summary"
+    },
+    {
+      "order": 2,
+      "path": "project_setup/_index.md",
+      "tokens": 599,
+      "type": "summary"
+    },
+    {
+      "order": 2,
+      "path": "providers/_index.md",
+      "tokens": 481,
+      "type": "summary"
+    },
+    {
+      "importance": 50,
+      "path": "project_setup/context.md",
+      "tokens": 192,
+      "type": "context"
+    },
+    {
+      "importance": 50,
+      "path": "project_setup/pnpm_build_setup/context.md",
+      "tokens": 112,
+      "type": "context"
+    },
+    {
+      "importance": 50,
+      "path": "project_setup/pnpm_build_setup/pnpm_install_and_build_fixes.md",
+      "tokens": 737,
+      "type": "context"
+    },
+    {
+      "importance": 50,
+      "path": "providers/context.md",
+      "tokens": 158,
+      "type": "context"
+    },
+    {
+      "importance": 50,
+      "path": "providers/copilot_provider/context.md",
+      "tokens": 84,
+      "type": "context"
+    },
+    {
+      "importance": 50,
+      "path": "providers/copilot_provider/copilot_provider_data_fetch_flow.md",
+      "tokens": 700,
+      "type": "context"
+    }
+  ],
+  "generated_at": "2026-04-09T00:36:09.165Z",
+  "lane_tokens": {
+    "contexts": 1983,
+    "stubs": 0,
+    "summaries": 1710
+  },
+  "source_fingerprint": "c09def08f51a59e8331b81d72dcbec5b8702830f2b7fa6b388024bbaf42e9dcb",
+  "total_tokens": 3693,
+  "version": 1
+}
