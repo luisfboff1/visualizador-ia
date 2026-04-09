@@ -17,13 +17,17 @@ git commit -m "feat: descrição do que mudou"
 git push
 ```
 
-### 4. Criar a Release no GitHub
+### 4. Criar a Release no GitHub e anexar o zip
 ```powershell
-gh release create v1.0.2 --title "v1.0.2 - Descrição" --notes "- O que mudou"
+# Feche o app antes de zipar!
+$7z = Get-ChildItem "node_modules\.pnpm\7zip-bin*" -Recurse -Filter "7za.exe" | Where-Object { $_.FullName -like "*win\x64*" } | Select-Object -First 1 -ExpandProperty FullName
+& $7z a -tzip "release\AI-Usage-Dashboard-vX.Y.Z-win-x64.zip" ".\release\win-unpacked\*"
+
+gh release create vX.Y.Z --title "vX.Y.Z - Descrição" --notes "- O que mudou"
+gh release upload vX.Y.Z "release\AI-Usage-Dashboard-vX.Y.Z-win-x64.zip"
 ```
 
-> **Não precisa gerar novo .exe para publicar a release.**  
-> O GitHub Release é só um marcador de versão — quem já usa o app vai detectar automaticamente via botão `⬆`.
+> **Importante:** Sempre anexe o `.zip` à release — é o que o usuário vai baixar ao clicar "Baixar" no app.
 
 ### 5. (Opcional) Gerar novo .exe para distribuição
 Só faça isso se quiser distribuir um instalador novo para quem ainda não tem o app:
