@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { ProviderBase, ProviderSnapshot, UsageWindow } from './base'
-import { readClaudeCredentials } from '../auth/credentials'
+import { readClaudeCredentials, saveClaudeAccessToken } from '../auth/credentials'
 import { getClaudeSessionKey } from '../auth/chromeCookies'
 import { CONFIG } from '../config'
 
@@ -81,8 +81,24 @@ export class ClaudeProvider extends ProviderBase {
   }
 
   private async fetchViaOAuth(): Promise<ProviderSnapshot | null> {
-    const creds = readClaudeCredentials()
+    let creds = readClaudeCredentials()
     if (!creds?.access_token) return null
+
+    // Verifica se o token está expirado (com folga de 60s)
+    const now = Date.now()
+    const expiredOrSoon = creds.expires_at != null && creds.expires_at - 60_000 < now
+
+    if (expiredOrSoon && creds.refresh_token) {
+      console.info('[Claude] Token expirado, tentando refresh...')
+      try {
+        creds = await this.refreshOAuthToken(creds.refresh_token) ?? creds
+      } catch (e) {
+        console.warn('[Claude] Refresh falhou:', e)
+        // Prossegue com token antigo — pode still funcionar ou vai dar 401 abaixo
+      }
+    } else if (expiredOrSoon) {
+      throw new Error('Token expirado. Reabra o Claude Desktop para renovar.')
+    }
 
     const resp = await axios.get<OAuthUsageResponse>(CONFIG.api.claude.usage, {
       headers: {
@@ -117,6 +133,30 @@ export class ClaudeProvider extends ProviderBase {
       extraUsageSpendUsd: toUsd(extraUsage?.used_credits),
       extraUsageLimitUsd: toUsd(extraUsage?.monthly_limit),
     })
+  }
+
+  /** Tenta renovar o access_token usando o refresh_token do Claude */
+  private async refreshOAuthToken(refreshToken: string) {
+    const resp = await axios.post<{
+      access_token: string
+      refresh_token?: string
+      expires_in?: number
+    }>(
+      'https://claude.ai/oauth2/token',
+      new URLSearchParams({
+        grant_type: 'refresh_token',
+        refresh_token: refreshToken,
+      }),
+      {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        timeout: 10000,
+      },
+    )
+    const { access_token, refresh_token: newRefresh, expires_in } = resp.data
+    const expiresAt = expires_in ? Date.now() + expires_in * 1000 : undefined
+    saveClaudeAccessToken(access_token, newRefresh, expiresAt)
+    console.info('[Claude] Token renovado com sucesso')
+    return { access_token, refresh_token: newRefresh ?? refreshToken, expires_at: expiresAt }
   }
 
   private async fetchViaCookies(): Promise<ProviderSnapshot | null> {

@@ -5,6 +5,8 @@ import { CONFIG } from '../config'
 // Formato normalizado retornado pelos leitores
 export interface ClaudeCredentials {
   access_token: string
+  refresh_token?: string
+  expires_at?: number   // Unix timestamp em ms
   org_id?: string
 }
 
@@ -53,7 +55,12 @@ function parseClaudeFile(raw: ClaudeRawFile | null): ClaudeCredentials | null {
   // Formato atual: claudeAiOauth.accessToken
   const token = raw.claudeAiOauth?.accessToken || raw.access_token
   if (!token) return null
-  return { access_token: token, org_id: raw.organizationUuid }
+  return {
+    access_token: token,
+    refresh_token: raw.claudeAiOauth?.refreshToken,
+    expires_at: raw.claudeAiOauth?.expiresAt,
+    org_id: raw.organizationUuid,
+  }
 }
 
 function parseCodexFile(raw: CodexRawFile | null): CodexAuth | null {
@@ -70,6 +77,26 @@ export function readClaudeCredentials(): ClaudeCredentials | null {
 
   const fallback = parseClaudeFile(tryReadJson<ClaudeRawFile>(CONFIG.paths.claude.credentialsFallback))
   return fallback
+}
+
+/** Atualiza accessToken (e opcionalmente refreshToken/expiresAt) no arquivo de credenciais */
+export function saveClaudeAccessToken(
+  newToken: string,
+  newRefreshToken?: string,
+  newExpiresAt?: number,
+): void {
+  const credPath = CONFIG.paths.claude.credentials
+  const raw = tryReadJson<ClaudeRawFile>(credPath) ?? {}
+  if (!raw.claudeAiOauth) raw.claudeAiOauth = {}
+  raw.claudeAiOauth.accessToken = newToken
+  if (newRefreshToken) raw.claudeAiOauth.refreshToken = newRefreshToken
+  if (newExpiresAt)    raw.claudeAiOauth.expiresAt    = newExpiresAt
+  try {
+    fs.mkdirSync(path.dirname(credPath), { recursive: true })
+    fs.writeFileSync(credPath, JSON.stringify(raw, null, 2), 'utf-8')
+  } catch (e) {
+    console.warn('[credentials] Failed to save Claude credentials:', e)
+  }
 }
 
 export function readCodexAuth(): CodexAuth | null {
