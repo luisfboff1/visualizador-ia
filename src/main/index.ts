@@ -1,5 +1,6 @@
 import { app, BrowserWindow, ipcMain, shell, Tray, Menu, screen } from 'electron'
 import path from 'path'
+import fs from 'fs'
 import https from 'https'
 import { loadCache, loadConfig, updateConfig } from './store'
 import { startScheduler, runRefresh, getLastSnapshot, getStatus, setLastSnapshot } from './scheduler'
@@ -20,6 +21,8 @@ function positionWindow(win: BrowserWindow) {
 }
 
 function createWindow() {
+  const iconPath = path.join(__dirname, '..', 'build', 'icon.ico')
+
   mainWindow = new BrowserWindow({
     width: 400,
     height: 720,
@@ -31,6 +34,7 @@ function createWindow() {
     alwaysOnTop: true,
     skipTaskbar: true,
     resizable: true,
+    icon: fs.existsSync(iconPath) ? iconPath : undefined,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,

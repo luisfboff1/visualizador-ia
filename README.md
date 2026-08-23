@@ -1,11 +1,17 @@
-# AI Usage Dashboard
+<p align="center">
+  <img src="docs/icon_realistic_transparent.png" alt="AI Usage Dashboard" width="128">
+</p>
 
-Widget flutuante para Windows que mostra em tempo real o consumo de créditos/requisições das suas contas:
+<h1 align="center">AI Usage Dashboard</h1>
+
+<p align="center">
+  Widget flutuante para Windows que mostra em tempo real o consumo de créditos/requisições dos seus agentes de IA:
+</p>
 
 - **Claude** (Anthropic) — janelas de uso da API
 - **Codex** (OpenAI) — limites de sessão e semanal
 - **GitHub Copilot** — premium requests e plano
-- **Google Gemini** — modelos disponíveis e quotas do Google AI Studio
+- **Google Antigravity / Gemini** — cotas de 5h e semanal em tempo real
 
 <p align="center">
   <img src="docs/screenshot.png" alt="AI Usage Dashboard" width="420">
