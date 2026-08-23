@@ -1,3 +1,6 @@
+import fs from 'fs'
+import path from 'path'
+import os from 'os'
 import axios from 'axios'
 import { ProviderBase, ProviderSnapshot, UsageWindow } from './base'
 import { CONFIG } from '../config'
@@ -16,19 +19,57 @@ interface GeminiModelsResponse {
   models?: GeminiModel[]
 }
 
+interface AntigravityBucket {
+  bucketId?: string
+  displayName?: string
+  description?: string
+  window?: string
+  remainingFraction?: number
+  resetTime?: string
+}
+
+interface AntigravityGroup {
+  displayName?: string
+  description?: string
+  buckets?: AntigravityBucket[]
+}
+
+interface AntigravityQuotaResponse {
+  response?: {
+    groups?: AntigravityGroup[]
+    description?: string
+  }
+}
+
 export class GeminiProvider extends ProviderBase {
   readonly name = 'Gemini'
+  readonly name = 'Google Antigravity'
 
   async isAvailable(): Promise<boolean> {
     const config = loadConfig()
     return !!config.geminiApiKey
+    if (config.geminiApiKey) return true
+    const server = await this.discoverAntigravityServer()
+    return !!server
   }
 
   async fetch(): Promise<ProviderSnapshot> {
+    // 1. Tenta buscar direto do Google Antigravity local (sem precisar de nada)
+    try {
+      const antigravitySnap = await this.fetchViaAntigravity()
+      if (antigravitySnap && antigravitySnap.windows.length > 0) {
+        return antigravitySnap
+      }
+    } catch (e) {
+      console.warn('[Gemini] Antigravity fetch failed:', (e as Error).message)
+    }
+
+    // 2. Fallback: API Key configurada
     const config = loadConfig()
     const apiKey = config.geminiApiKey
     if (!apiKey) {
       return this.errorSnapshot('API key não configurada. Clique em "Conectar Gemini" para adicionar.')
+      return this.errorSnapshot('Antigravity não detectado e API key não configurada. Inicie o Antigravity ou adicione sua API Key.')
     }
 
     let apiError = ''
@@ -63,6 +104,83 @@ export class GeminiProvider extends ProviderBase {
       playwrightError && `Browser: ${playwrightError}`,
     ].filter(Boolean).join(' | ')
     return this.errorSnapshot(detail || 'Não foi possível obter dados do Gemini.')
+  }
+
+  private async discoverAntigravityServer(): Promise<{ port: number; csrfToken: string } | null> {
+    const logDir = path.join(os.homedir(), '.gemini', 'antigravity', 'log')
+    if (!fs.existsSync(logDir)) return null
+
+    try {
+      const files = fs.readdirSync(logDir)
+        .filter(f => f.startsWith('cli-') && f.endsWith('.log'))
+        .map(f => ({ name: f, time: fs.statSync(path.join(logDir, f)).mtimeMs }))
+        .sort((a, b) => b.time - a.time)
+
+      for (const file of files.slice(0, 5)) {
+        const content = fs.readFileSync(path.join(logDir, file.name), 'utf8')
+        const matches = [...content.matchAll(/Language server listening on random port at (\d+) for HTTP\b/g)]
+        for (const match of matches.reverse()) {
+          const port = parseInt(match[1])
+          try {
+            const html = await axios.get(`http://127.0.0.1:${port}/`, { timeout: 1200 })
+            const csrfMatch = html.data.match(/"csrfToken":"([^"]+)"/)
+            if (csrfMatch) {
+              return { port, csrfToken: csrfMatch[1] }
+            }
+          } catch {}
+        }
+      }
+    } catch (e) {
+      console.warn('[Gemini] Discovery error:', e)
+    }
+    return null
+  }
+
+  private async fetchViaAntigravity(): Promise<ProviderSnapshot | null> {
+    const server = await this.discoverAntigravityServer()
+    if (!server) return null
+
+    const url = `http://127.0.0.1:${server.port}/exa.language_server_pb.LanguageServerService/RetrieveUserQuotaSummary`
+    const res = await axios.post<AntigravityQuotaResponse>(url, { force_refresh: false }, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Connect-Protocol-Version': '1',
+        'x-codeium-csrf-token': server.csrfToken,
+      },
+      timeout: 4000,
+    })
+
+    const groups = res.data?.response?.groups || []
+    if (groups.length === 0) return null
+
+    const windows: UsageWindow[] = []
+
+    for (const group of groups) {
+      const groupName = group.displayName || ''
+      const isGeminiGroup = groupName.toLowerCase().includes('gemini')
+      const prefix = isGeminiGroup ? 'Gemini' : 'Claude/GPT'
+
+      for (const bucket of group.buckets || []) {
+        const remainingFraction = bucket.remainingFraction ?? 1
+        const remainingPct = Math.max(0, Math.min(100, Math.round(remainingFraction * 100)))
+        const usedPct = 100 - remainingPct
+        const windowLabel = bucket.window === '5h' ? '5h' : 'Semanal'
+        const label = `${prefix} (${windowLabel})`
+
+        windows.push({
+          label,
+          usedPct,
+          remainingPct,
+          resetDate: bucket.resetTime,
+        })
+      }
+    }
+
+    return this.makeSnapshot({
+      source: 'oauth',
+      windows,
+      plan: 'Antigravity Ativo',
+    })
   }
 
   private async fetchViaApi(apiKey: string): Promise<ProviderSnapshot | null> {

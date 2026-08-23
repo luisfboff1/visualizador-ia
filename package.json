@@ -2,6 +2,8 @@
   "name": "visualizador-ia",
   "version": "1.1.0",
   "description": "AI Usage Dashboard – Claude, Codex, Copilot, Gemini",
+  "version": "1.1.1",
+  "description": "AI Usage Dashboard – Claude, Codex, Copilot, Google Antigravity",
   "main": "dist-main/index.js",
   "scripts": {
     "dev:renderer": "vite",
