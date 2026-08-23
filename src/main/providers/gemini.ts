@@ -42,12 +42,10 @@ interface AntigravityQuotaResponse {
 }
 
 export class GeminiProvider extends ProviderBase {
-  readonly name = 'Gemini'
   readonly name = 'Google Antigravity'
 
   async isAvailable(): Promise<boolean> {
     const config = loadConfig()
-    return !!config.geminiApiKey
     if (config.geminiApiKey) return true
     const server = await this.discoverAntigravityServer()
     return !!server
@@ -68,14 +66,12 @@ export class GeminiProvider extends ProviderBase {
     const config = loadConfig()
     const apiKey = config.geminiApiKey
     if (!apiKey) {
-      return this.errorSnapshot('API key não configurada. Clique em "Conectar Gemini" para adicionar.')
       return this.errorSnapshot('Antigravity não detectado e API key não configurada. Inicie o Antigravity ou adicione sua API Key.')
     }
 
     let apiError = ''
     let playwrightError = ''
 
-    // Estratégia 1: Valida key via API e busca modelos disponíveis
     let apiSnap: ProviderSnapshot | null = null
     try {
       apiSnap = await this.fetchViaApi(apiKey)
@@ -84,7 +80,6 @@ export class GeminiProvider extends ProviderBase {
       console.warn('[Gemini] API failed:', apiError)
     }
 
-    // Tenta enriquecer com dados de uso via Playwright
     try {
       const usageSnap = await this.fetchUsageViaPlaywright()
       if (usageSnap && usageSnap.windows.length > 0) {
@@ -96,7 +91,6 @@ export class GeminiProvider extends ProviderBase {
       console.warn('[Gemini] Playwright usage failed:', playwrightError)
     }
 
-    // Se a API funcionou mas o Playwright não conseguiu dados de uso, retorna só com API
     if (apiSnap) return apiSnap
 
     const detail = [
