@@ -92,13 +92,28 @@ export class GeminiProvider extends ProviderBase {
 
   private async fetchUsageViaPlaywright(): Promise<ProviderSnapshot | null> {
     const { chromium } = await import('playwright-core')
-    const userDataDir = CONFIG.paths.chrome.userData
+    
+    // Tenta Chrome primeiro, depois Edge
+    const attempts = [
+      { channel: 'chrome', userDataDir: CONFIG.paths.chrome.userData },
+      { channel: 'msedge', userDataDir: CONFIG.paths.edge.userData },
+    ]
 
-    const browser = await chromium.launchPersistentContext(userDataDir, {
-      channel: 'chrome',
-      headless: true,
-      args: ['--no-first-run', '--no-default-browser-check'],
-    })
+    let browser: any = null
+    for (const attempt of attempts) {
+      try {
+        browser = await chromium.launchPersistentContext(attempt.userDataDir, {
+          channel: attempt.channel,
+          headless: true,
+          args: ['--no-first-run', '--no-default-browser-check'],
+        })
+        break
+      } catch {
+        // Tenta o próximo navegador
+      }
+    }
+
+    if (!browser) return null
 
     try {
       const page = await browser.newPage()
