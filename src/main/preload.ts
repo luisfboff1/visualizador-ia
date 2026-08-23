@@ -17,6 +17,8 @@ contextBridge.exposeInMainWorld('api', {
   rawFetch: () => ipcRenderer.invoke('raw-fetch'),
   rawFetchCodex: () => ipcRenderer.invoke('raw-fetch-codex'),
   rawFetchCopilot: () => ipcRenderer.invoke('raw-fetch-copilot'),
+  rawFetchGemini: () => ipcRenderer.invoke('raw-fetch-gemini'),
+  saveGeminiKey: (apiKey: string) => ipcRenderer.invoke('save-gemini-key', apiKey),
   hideWindow: () => ipcRenderer.invoke('hide-window'),
   toggleAlwaysOnTop: () => ipcRenderer.invoke('toggle-always-on-top'),
   checkUpdate: () => ipcRenderer.invoke('check-update'),

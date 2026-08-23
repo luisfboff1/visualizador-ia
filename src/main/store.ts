@@ -12,9 +12,11 @@ export interface AppConfig {
     claude: boolean
     codex: boolean
     copilot: boolean
+    gemini: boolean
   }
   copilotToken?: string
   githubCustomerId?: string
+  geminiApiKey?: string
 }
 
 const DEFAULT_CONFIG: AppConfig = {
@@ -23,6 +25,7 @@ const DEFAULT_CONFIG: AppConfig = {
     claude: true,
     codex: true,
     copilot: true,
+    gemini: true,
   },
 }
 

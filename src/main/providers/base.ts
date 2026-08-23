@@ -44,6 +44,7 @@ export interface AllProvidersSnapshot {
   claude: ProviderSnapshot | null
   codex: ProviderSnapshot | null
   copilot: ProviderSnapshot | null
+  gemini: ProviderSnapshot | null
 }
 
 export abstract class ProviderBase {

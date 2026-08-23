@@ -4,10 +4,11 @@ import { UsageBar } from './UsageBar'
 import { ModelTable } from './ModelTable'
 import { CountdownTimer } from './CountdownTimer'
 import { DeviceFlowModal } from './DeviceFlowModal'
+import { GeminiKeyInput } from './GeminiKeyInput'
 
 interface Props {
   snapshot: ProviderSnapshot | null
-  providerKey: 'claude' | 'codex' | 'copilot'
+  providerKey: 'claude' | 'codex' | 'copilot' | 'gemini'
   onRefreshNeeded: () => void
   isLoading?: boolean
 }
@@ -64,6 +65,15 @@ export function ProviderCard({ snapshot, providerKey, onRefreshNeeded, isLoading
             {snapshot!.windows.map((w) => (
               <UsageBar key={w.label} window={w} />
             ))}
+
+            {snapshot!.windows.length === 0 && snapshot!.plan && (
+              <div className="provider-extra">
+                <div className="extra-row">
+                  <span className="extra-label">Modelos disponíveis</span>
+                  <span className="extra-value gemini-models">{snapshot!.plan}</span>
+                </div>
+              </div>
+            )}
 
             {(snapshot!.creditsRemaining !== undefined ||
               snapshot!.requestsUsed !== undefined ||
@@ -159,6 +169,10 @@ export function ProviderCard({ snapshot, providerKey, onRefreshNeeded, isLoading
               >
                 Conectar com GitHub
               </button>
+            )}
+
+            {providerKey === 'gemini' && (
+              <GeminiKeyInput onSaved={onRefreshNeeded} />
             )}
           </div>
         )}

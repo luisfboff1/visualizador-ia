@@ -1,6 +1,7 @@
 import { ClaudeProvider } from './providers/claude'
 import { CodexProvider } from './providers/codex'
 import { CopilotProvider } from './providers/copilot'
+import { GeminiProvider } from './providers/gemini'
 import { AllProvidersSnapshot, ProviderSnapshot } from './providers/base'
 import { saveCache } from './store'
 
@@ -9,6 +10,7 @@ type RefreshCallback = (snapshot: AllProvidersSnapshot) => void
 const claude = new ClaudeProvider()
 const codex = new CodexProvider()
 const copilot = new CopilotProvider()
+const gemini = new GeminiProvider()
 
 let intervalId: NodeJS.Timeout | null = null
 let isRunning = false
@@ -63,10 +65,11 @@ export async function runRefresh(): Promise<AllProvidersSnapshot> {
 
   try {
     const prev = lastSnapshot
-    const [claudeSnap, codexSnap, copilotSnap] = await Promise.all([
+    const [claudeSnap, codexSnap, copilotSnap, geminiSnap] = await Promise.all([
       safeProviderFetch(claude, prev?.claude),
       safeProviderFetch(codex, prev?.codex),
       safeProviderFetch(copilot, prev?.copilot),
+      safeProviderFetch(gemini, prev?.gemini),
     ])
 
     const snapshot: AllProvidersSnapshot = {
@@ -74,6 +77,7 @@ export async function runRefresh(): Promise<AllProvidersSnapshot> {
       claude: claudeSnap,
       codex: codexSnap,
       copilot: copilotSnap,
+      gemini: geminiSnap,
     }
 
     lastSnapshot = snapshot
@@ -127,5 +131,6 @@ function buildEmpty(): AllProvidersSnapshot {
     claude: null,
     codex: null,
     copilot: null,
+    gemini: null,
   }
 }

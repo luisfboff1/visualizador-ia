@@ -278,7 +278,51 @@ ipcMain.handle('diagnose', () => {
     copilot: {
       hasSavedToken: !!config.copilotToken,
     },
+    gemini: {
+      hasApiKey: !!config.geminiApiKey,
+      keyPrefix: config.geminiApiKey?.substring(0, 10) ?? null,
+    },
   }
+})
+
+ipcMain.handle('save-gemini-key', async (_event, apiKey: string) => {
+  updateConfig({ geminiApiKey: apiKey.trim() })
+  return { ok: true }
+})
+
+ipcMain.handle('raw-fetch-gemini', async () => {
+  const config = loadConfig()
+  const apiKey = config.geminiApiKey
+  if (!apiKey) return { error: 'No Gemini API key saved' }
+  return new Promise((resolve) => {
+    const url = new URL('https://generativelanguage.googleapis.com/v1beta/models')
+    url.searchParams.set('key', apiKey)
+    const parsed = url
+    const options = {
+      hostname: parsed.hostname,
+      path: parsed.pathname + parsed.search,
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'User-Agent': 'visualizador-ia/1.0',
+      },
+      timeout: 12000,
+    }
+    const req = https.request(options, (res) => {
+      let body = ''
+      res.on('data', (chunk: Buffer) => { body += chunk })
+      res.on('end', () => {
+        try {
+          resolve({ status: res.statusCode, data: JSON.parse(body) })
+        } catch {
+          resolve({ status: res.statusCode, raw: body.substring(0, 2000) })
+        }
+      })
+    })
+    req.on('error', (e: Error) => resolve({ error: e.message }))
+    req.on('timeout', () => { req.destroy(); resolve({ error: 'Timeout após 12s' }) })
+    req.end()
+  })
 })
 
 // --- Window control IPC ---

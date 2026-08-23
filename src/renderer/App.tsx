@@ -26,6 +26,7 @@ export function App() {
       `Claude: ${d.claude.hasCredentials ? `✓ token ${d.claude.tokenPrefix}...` : '✗ sem credenciais'}`,
       `Codex: ${d.codex.hasCredentials ? `✓ token ${d.codex.tokenPrefix}...` : '✗ sem credenciais'}`,
       `Copilot: ${d.copilot.hasSavedToken ? '✓ token salvo' : '✗ não autenticado'}`,
+      `Gemini: ${d.gemini.hasApiKey ? `✓ key ${d.gemini.keyPrefix}...` : '✗ sem API key'}`,
     ]
     setDiagInfo(lines.join('\n'))
     setTimeout(() => setDiagInfo(null), 12000)
@@ -48,6 +49,13 @@ export function App() {
   const runRawFetchCopilot = async () => {
     setDiagInfo('Buscando raw Copilot...')
     const r = await window.api.rawFetchCopilot()
+    setDiagInfo(JSON.stringify(r, null, 2))
+    setTimeout(() => setDiagInfo(null), 30000)
+  }
+
+  const runRawFetchGemini = async () => {
+    setDiagInfo('Buscando raw Gemini...')
+    const r = await window.api.rawFetchGemini()
     setDiagInfo(JSON.stringify(r, null, 2))
     setTimeout(() => setDiagInfo(null), 30000)
   }
@@ -100,6 +108,12 @@ export function App() {
           onRefreshNeeded={refresh}
           isLoading={isLoading}
         />
+        <ProviderCard
+          snapshot={snapshot?.gemini ?? null}
+          providerKey="gemini"
+          onRefreshNeeded={refresh}
+          isLoading={isLoading}
+        />
       </div>
 
       {diagInfo && (
@@ -126,6 +140,7 @@ export function App() {
           <button className="diag-btn" onClick={runRawFetch} title="Raw API Claude">🔍C</button>
           <button className="diag-btn" onClick={runRawFetchCodex} title="Raw API Codex">🔍X</button>
           <button className="diag-btn" onClick={runRawFetchCopilot} title="Raw API Copilot">🔍G</button>
+          <button className="diag-btn" onClick={runRawFetchGemini} title="Raw API Gemini">🔍Gm</button>
           <button
             className="diag-btn"
             onClick={checkUpdate}

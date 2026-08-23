@@ -48,6 +48,11 @@ export const CONFIG = {
       clientId: 'Iv1.b507a08c87ecfe98',
       scope: 'read:user',
     },
+    gemini: {
+      models: 'https://generativelanguage.googleapis.com/v1beta/models',
+      usagePage: 'https://aistudio.google.com/usage',
+      apiKeyPage: 'https://aistudio.google.com/apikey',
+    },
   },
 
   // Refresh

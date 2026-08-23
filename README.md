@@ -5,6 +5,7 @@ Widget flutuante para Windows que mostra em tempo real o consumo de créditos/re
 - **Claude** (Anthropic) — janelas de uso da API
 - **Codex** (OpenAI) — limites de sessão e semanal
 - **GitHub Copilot** — premium requests e plano
+- **Google Gemini** — modelos disponíveis e quotas do Google AI Studio
 
 <p align="center">
   <img src="docs/screenshot.png" alt="AI Usage Dashboard" width="420">
@@ -79,9 +80,10 @@ Na primeira execução, o app tenta autenticar automaticamente usando:
 
 | Provider | Método |
 |---|---|
-| Claude | Chave de API (`ANTHROPIC_API_KEY`) lida do ambiente |
-| Codex | OAuth (tokens salvos pelo VS Code/Codex CLI) |
-| Copilot | Device Flow do GitHub — clique em "Conectar Copilot" no app |
+| Claude | Chave de API (`ANTHROPIC_API_KEY`) ou credenciais do Claude Desktop |
+| Codex | OAuth (tokens salvos pelo VS Code/Codex CLI) / Scraping ChatGPT |
+| Copilot | Device Flow do GitHub — clique em "Conectar com GitHub" no app |
+| Gemini | API Key do Google AI Studio — cole no app ou obtenha em aistudio.google.com |
 
 ### Variáveis de ambiente opcionais
 

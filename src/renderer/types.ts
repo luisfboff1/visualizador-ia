@@ -38,13 +38,15 @@ export interface AllProvidersSnapshot {
   claude: ProviderSnapshot | null
   codex: ProviderSnapshot | null
   copilot: ProviderSnapshot | null
+  gemini: ProviderSnapshot | null
 }
 
 export interface AppConfig {
   refreshIntervalMs: number
-  providers: { claude: boolean; codex: boolean; copilot: boolean }
+  providers: { claude: boolean; codex: boolean; copilot: boolean; gemini: boolean }
   copilotToken?: string
   githubCustomerId?: string
+  geminiApiKey?: string
 }
 
 declare global {
@@ -63,10 +65,13 @@ declare global {
         claude: { hasCredentials: boolean; tokenPrefix: string | null }
         codex: { hasCredentials: boolean; tokenPrefix: string | null }
         copilot: { hasSavedToken: boolean }
+        gemini: { hasApiKey: boolean; keyPrefix: string | null }
       }>
       rawFetch: () => Promise<{ status?: number; data?: unknown; error?: string; raw?: string }>
       rawFetchCodex: () => Promise<{ status?: number; data?: unknown; error?: string; raw?: string }>
       rawFetchCopilot: () => Promise<{ status?: number; data?: unknown; error?: string; raw?: string }>
+      rawFetchGemini: () => Promise<{ status?: number; data?: unknown; error?: string; raw?: string }>
+      saveGeminiKey: (apiKey: string) => Promise<{ ok: boolean }>
       hideWindow: () => Promise<void>
       toggleAlwaysOnTop: () => Promise<boolean>
       checkUpdate: () => Promise<{ hasUpdate: boolean; latestVersion: string; url: string }>
