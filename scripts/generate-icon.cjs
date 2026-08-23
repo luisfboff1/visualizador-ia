@@ -27,7 +27,7 @@ if (fs.existsSync(srcImage)) {
     "final_icon.resize((32, 32), Image.Resampling.LANCZOS).save('public/favicon.ico')",
     "final_icon.resize((16, 16), Image.Resampling.LANCZOS).save('build/tray-icon.png')",
     "final_icon.resize((32, 32), Image.Resampling.LANCZOS).save('build/tray-icon@2x.png')",
-    "sizes = [(16, 16), (24, 24), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)]",
+    "sizes = [(256, 256), (128, 128), (64, 64), (48, 48), (32, 32), (24, 24), (16, 16)]",
     "final_icon.save('build/icon.ico', format='ICO', sizes=sizes)",
     "final_icon.save('public/icon.ico', format='ICO', sizes=sizes)"
   ].join('\n')
