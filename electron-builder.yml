@@ -9,6 +9,7 @@ directories:
 files:
   - dist-main/**/*
   - dist-renderer/**/*
+  - build/**/*
   - package.json
   - "!node_modules/chrome-cookies-secure/**"
   - "!node_modules/win-dpapi/**"

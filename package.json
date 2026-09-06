@@ -1,6 +1,6 @@
 {
   "name": "visualizador-ia",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "AI Usage Dashboard – Claude, Codex, Copilot, Google Antigravity",
   "main": "dist-main/index.js",
   "scripts": {
