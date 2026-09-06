@@ -1,6 +1,5 @@
 {
   "name": "visualizador-ia",
-  "version": "1.1.4",
   "version": "1.1.6",
   "description": "AI Usage Dashboard – Claude, Codex, Copilot, Google Antigravity",
   "main": "dist-main/index.js",
@@ -9,7 +8,6 @@
     "dev:main": "tsc -p tsconfig.json --watch",
     "dev": "concurrently \"pnpm run dev:renderer\" \"pnpm run dev:main\" \"wait-on http://localhost:5173 && electron .\"",
     "build:renderer": "vite build",
-    "build:main": "tsc -p tsconfig.json",
     "build:main": "tsc -p tsconfig.json && node scripts/copy-assets.cjs",
     "build": "pnpm run build:renderer && pnpm run build:main",
     "icon": "node scripts/generate-icon.cjs",
