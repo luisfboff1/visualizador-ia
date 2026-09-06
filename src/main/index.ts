@@ -10,6 +10,7 @@ import { AllProvidersSnapshot } from './providers/base'
 import { createTrayNativeImage } from './trayIcon'
 
 const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged
+const isDev = process.env.NODE_ENV === 'development' || !(app?.isPackaged ?? false)
 
 let mainWindow: BrowserWindow | null = null
 let tray: Tray | null = null
